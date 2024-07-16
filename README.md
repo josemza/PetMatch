@@ -46,6 +46,12 @@ D --> E(Devolver resultados)
 
 >El proceso detecta que hay un perro en la imagen y procede con la búsqueda en la base de datos.
 
+Adicionalmente en la página de resultados cada imagen posee un enlace de geolocalización que redirige al usuario hacia google maps. En la ventana de google maps se encuentra un pin sobre la ubicación donde la foto fue tomada. Con esta funcionalidad se busca ayudar al usuario con la ubicación de la última vez que se vio a su mascota.
+
+<div style="text-align: center;">
+    <img src="Capturas/mapa_geolocalizacion.jpeg" alt="Geolocalizacion de la imagen" style="width: 600px; border-radius: 50%;">
+</div>
+
 **Buscar a partir de una imagen con un pato**
 | [![Seccion busqueda](Capturas/Buscar_mascota.jpg)](Capturas/Buscar_mascota.jpg) | [![Seleccionar mascota](Capturas/seleccion_pato.jpg)](Capturas/seleccion_pato.jpg) | [![Resultados](Capturas/pantalla_no_perro.jpg)](Capturas/pantalla_no_perro.jpg) | 
 |:--:|:--:|:--:| 
@@ -53,3 +59,33 @@ D --> E(Devolver resultados)
 >El proceso detecta que no hay un perro en la imagen y envía un mensaje al usuario y no llama a la función de bpusqueda.
 
 >**Nota importante:** En esta etapa del proyecto solo se permite que el usuario cargue una foto a la vez para realizar la búsqueda. En posteriores actualizaciones se planea permitir que el usuario pueda cargar varias fotos a la vez con la intención de obtener un mejor resultado.
+
+### Reporte de posible perro perdido
+Esta funcionalidad permite que el usuario pueda reportar a un perro que encontró perdido. Esta sección depende del apoyo de la comunidad por lo que es indispensable promover e incentivar la acción de reportar.
+
+**Diagrama de flujo del proceso general del reporte de perro perdido**
+```mermaid
+graph LR
+A(Cargar la imagen) --> B{"¿Hay perro?"}
+B -- sí --> C(Transforma la imagen y la almacena)
+B -- no --> D(Muestra mensaje de error)
+D -- retorna a la pantalla inicial --> A
+C --> E(Muestra mensaje de éxito)
+```
+
+**Reportar a partir de una imagen con perro**
+| [![Seccion busqueda](Capturas/Buscar_mascota.jpg)](Capturas/Buscar_mascota.jpg) | [![Seleccionar mascota](Capturas/seleccion_perro_reporte.jpg)](Capturas/seleccion_perro_reporte.jpg) | [![Resultados](Capturas/mensaje_exito_reporte.jpg)](Capturas/mensaje_exito_reporte.jpg) | 
+|:--:|:--:|:--:| 
+
+>El proceso detecta que hay un perro en la imagen y procede con la preparación de la imagen para almacenarla en la base de datos.
+
+## Sección de historias de éxito
+En esta sección el usuario puede visualizar las historias de reencuentro gracias a la herramienta. Son historias cargadas por los usuarios. Actualmente no está disponible aún un formulario para cargar las historias directamente por el usuario por lo que la historia se recopila y carga directamente por el equipo de PetMatch.
+
+![Historias de reencuentro](Capturas/Historias.jpg)
+
+## Explicación del código
+
+
+
+
