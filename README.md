@@ -74,18 +74,74 @@ C --> E(Muestra mensaje de éxito)
 ```
 
 **Reportar a partir de una imagen con perro**
-| [![Seccion busqueda](Capturas/Buscar_mascota.jpg)](Capturas/Buscar_mascota.jpg) | [![Seleccionar mascota](Capturas/seleccion_perro_reporte.jpg)](Capturas/seleccion_perro_reporte.jpg) | [![Resultados](Capturas/mensaje_exito_reporte.jpg)](Capturas/mensaje_exito_reporte.jpg) | 
+| [![Seccion busqueda](Capturas/Buscar_mascota.jpg)](Capturas/Buscar_mascota.jpg) | [![Seleccionar mascota](Capturas/seleccionar_perro_reporte.jpg)](Capturas/seleccionar_perro_reporte.jpg) | [![Resultados](Capturas/mensaje_exito_reporte.jpg)](Capturas/mensaje_exito_reporte.jpg) | 
 |:--:|:--:|:--:| 
 
 >El proceso detecta que hay un perro en la imagen y procede con la preparación de la imagen para almacenarla en la base de datos.
 
 ## Sección de historias de éxito
+
 En esta sección el usuario puede visualizar las historias de reencuentro gracias a la herramienta. Son historias cargadas por los usuarios. Actualmente no está disponible aún un formulario para cargar las historias directamente por el usuario por lo que la historia se recopila y carga directamente por el equipo de PetMatch.
 
 ![Historias de reencuentro](Capturas/Historias.jpg)
 
 ## Explicación del código
 
+Para este proyecto se aprovecharon modelos pre-entrenados como ResNet50 y YoloV5 para la extracción de *embeddings* y detección de perros en imágenes respectivamente.
 
+A continuación se detallan los códigos más importantes para el funcionamiento:
+
+- Cargar modelo ResNet50 preentrenado con los pesos del conjunto de datos imagenet.
+	```python
+	base_model  = ResNet50(weights='imagenet')
+	model  = Model(inputs=base_model.input, outputs=base_model.get_layer('avg_pool').output)
+	```
+
+- Función para la extracción de *embeddings* a partir de una imagen
+
+	```python
+	def  extract_embedding(img_path):
+		img  = image.load_img(img_path, target_size=(224, 224))
+		img_data  = image.img_to_array(img)
+		img_data  =  np.expand_dims(img_data, axis=0)
+		img_data  = preprocess_input(img_data)
+		embedding  =  model.predict(img_data)
+		return  embedding.flatten()
+	```
+
+	La línea ```embedding  =  model.predict(img_data)``` utiliza el modelo ResNet50 para obtener el *embedding*.
+
+- Función para encontrar las 5 imágenes más cercanas.
+
+	```python
+	def  find_similar_images(query_img_path, k=5):
+		query_embedding  =  extract_embedding(query_img_path)
+		with  open('embeddings.pkl', 'rb') as  f:
+			embeddings, image_paths  =  pickle.load(f)
+			
+		distances  =  cosine_distances([query_embedding], embeddings)[0]
+		nearest_indices  =  distances.argsort()[:k]
+		similar_images  = [image_paths[i] for  i  in  nearest_indices]
+		
+		return  similar_images
+	```
+	Para este propósito se utilizó la ```distancia coseno``` como parámetro de similitud. Un valor cercano a 1 indica que las imágenes son similares.
+
+- Cargar el modelo Yolov5
+
+	```python
+	model_yolo  =  torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+	```
+ 
+- Función para validar que la imagen contiene un perro
+	```python
+	def is_dog(imagen_path):    
+	    img = cv2.imread(imagen_path)
+	    results = model_yolo(img)    
+	    etiquetas = results.pred[0][:, -1].cpu().numpy()
+	    
+	    return 16 in etiquetas
+	```
+ La línea ```results = model_yolo(img)``` utiliza el modelo Yolov5 para obtener el identificar si la imagen contiene un perro. ```16 in etiquetas``` hace referencia a la presencia de la etiqueta 16 la cual representa a "perro".
 
 
