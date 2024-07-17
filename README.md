@@ -85,6 +85,9 @@ En esta sección el usuario puede visualizar las historias de reencuentro gracia
 
 ![Historias de reencuentro](Capturas/Historias.jpg)
 
+## Dataset para pruebas
+Para realizar las pruebas se utilizó el conjunto de datos de [Stanford Dogs](https://www.kaggle.com/datasets/jessicali9530/stanford-dogs-dataset) que contiene imágenes de 120 razas de perros de todo el mundo.
+
 ## Explicación del código
 
 Para este proyecto se aprovecharon modelos pre-entrenados como ResNet50 y YoloV5 para la extracción de *embeddings* y detección de perros en imágenes respectivamente.
